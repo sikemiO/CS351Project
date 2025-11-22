@@ -21,14 +21,75 @@ public class ClientHandler implements Runnable {
     public void run() {
         String currentUser = null;
 
-        try {
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        try (Scanner in = new Scanner(socket.getInputStream());
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            out.println("Connected to bank.");
+
+            Account acc = login(in, out);
+            if (acc == null) {
+                out.println("Account not found.");
+                return;
+            }
+
+            currentUser = acc.getUsername();
+            activeUsers.add(currentUser);
+            userMenu(currentUser, in, out);
+
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        } finally {
+            if (currentUser != null) {
+                activeUsers.remove(currentUser);
+            } try {
+                socket.close();
+            } catch (IOException e) {}
+        }
+
         }
 
 
+    private Account login(Scanner in, PrintWriter out) {
+        while (true) {
+            out.println("1. Login");
+            out.println("2. Signup");
+            out.println("3. Exit");
+            out.print("Pick an option: ");
 
+            if (in.hasNextLine()) {
+                return null;
+            }
+
+            String option = in.nextLine();
+            switch (option) {
+                case "1":
+                    out.println("Enter your username: ");
+                    if (!in.hasNextLine()) {
+                        return null;
+                    }
+                    String username = in.nextLine();
+
+                    out.println("Enter your password: ");
+                    if (!in.hasNextLine()) {
+                        return null;
+                    }
+                    String password = in.nextLine();
+
+                    //Account account = bankService.login(username,password);
+                    if (account != null) {
+                        out.println("Login successful.");
+                        return account;
+                    } else {
+                        out.println("Login failed.");
+                    }
+                    break;
+
+                case "2":
+            }
+        }
     }
+
+    private void userMenu(String currentUser, Scanner in, PrintWriter out) {}
+
 }
