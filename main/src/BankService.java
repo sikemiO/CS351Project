@@ -14,6 +14,21 @@ public class BankService {
         this.ledger = ledger;
     }
 
+    public Account login(String username, String password) {
+        if (username == null || password == null) {
+            return null;
+        }
+        Account account = accounts.getAccount(username);
+        if (account == null) {
+            return null;
+        }
+        if (!account.checkPassword(password)) {
+            return null;
+        }
+
+        return account;
+    }
+
     public long getBalance(String username) {
         Account account = accounts.getAccount(username);
         if (account == null) {

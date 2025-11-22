@@ -76,7 +76,7 @@ public class ClientHandler implements Runnable {
                     }
                     String password = in.nextLine();
 
-                    //Account account = bankService.login(username,password);
+                    Account account = bankService.login(username,password);
                     if (account != null) {
                         out.println("Login successful.");
                         return account;
@@ -86,10 +86,46 @@ public class ClientHandler implements Runnable {
                     break;
 
                 case "2":
+                    out.print("Create a username: ");
+                    if (!in.hasNextLine()) {
+                        return null;
+                    }
+                    username = in.nextLine();
+                    out.print("Create a password: ");
+                    if (!in.hasNextLine()) {
+                        return null;
+                    }
+                    password = in.nextLine();
+
+                    account = bankService.createAccount(username,password);
+                    if (account != null) {
+                        out.println("Account created successfully.");
+                        return account;
+                    } else {
+                        out.println("Account creation failed.");
+                    }
+                    break;
+
+                    case "3":
+                    return null;
+
+                    default:
+                    out.println("Invalid option.");
+                    break;
             }
         }
     }
 
-    private void userMenu(String currentUser, Scanner in, PrintWriter out) {}
+    private void userMenu(String currentUser, Scanner in, PrintWriter out) {
+        while (true) {
+            out.println("Welcome " + currentUser);
+            out.println("1. Get balance");
+            out.println("2. Deposit");
+            out.println("3. Withdraw");
+            out.println("4. Transfer");
+            out.println("7. Get transactions");
+            out.println("9. Logout");
+        }
+    }
 
 }
