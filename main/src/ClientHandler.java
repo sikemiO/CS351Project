@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
             out.println("3. Exit");
             out.print("Pick an option: ");
 
-            if (in.hasNextLine()) {
+            if (!in.hasNextLine()) {
                 return null;
             }
 
@@ -123,9 +123,118 @@ public class ClientHandler implements Runnable {
             out.println("2. Deposit");
             out.println("3. Withdraw");
             out.println("4. Transfer");
-            out.println("7. Get transactions");
-            out.println("9. Logout");
+            out.println("5. Get transactions");
+            out.println("6. Logout");
+
+            if (!in.hasNextLine()) {
+                return;
+            }
+            String option = in.nextLine();
+            switch (option) {
+                case "1":
+                    out.println("Balance: " + bankService.getBalance(currentUser));
+                    break;
+                case "2":
+                    handleDeposit(currentUser, in, out);
+                    break;
+                case "3":
+                    handleWithdraw(currentUser, in, out);
+                    break;
+                case "4":
+                    handleTransfer(currentUser, in, out);
+                    break;
+                case "5":
+                    handleTransactions(currentUser, out);
+                    break;
+                case "6":
+                    out.println("Logged out, goodbye.");
+                    return;
+                default:
+                    out.println("Invalid option.");
+                    break;
+
+            }
         }
+    }
+
+    private void handleDeposit(String currentUser, Scanner in, PrintWriter out) {
+        out.print("Enter amount to deposit: ");
+        if (!in.hasNextLine()) {
+            return;
+        }
+        long amount = Long.parseLong(in.nextLine());
+        if (amount <= 0) {
+            out.println("Invalid amount.");
+            return;
+        }
+        try {
+            bankService.deposit(currentUser, amount);
+            out.println("Deposit successful.");
+        } catch (IllegalArgumentException e) {
+            out.println("Deposit failed. Error: " + e.getMessage());
+        }
+
+    }
+
+    private void handleWithdraw(String currentUser, Scanner in, PrintWriter out) {
+        out.print("Enter amount to withdraw: ");
+        if (!in.hasNextLine()) {
+            return;
+        }
+        long amount = Long.parseLong(in.nextLine());
+        if (amount <= 0) {
+            out.println("Invalid amount.");
+            return;
+        }
+        try {
+            if (bankService.withdraw(currentUser, amount)) {
+                out.println("Withdrawal successful.");
+            } else {
+                out.println("Insufficient funds.");
+            }
+        } catch (IllegalArgumentException e) {
+            out.println("Withdrawal failed. Error: " + e.getMessage());
+        }
+    }
+
+    private void handleTransfer(String currentUser, Scanner in, PrintWriter out) {
+        out.print("Enter username to transfer to: ");
+        if (!in.hasNextLine()) {
+            return;
+        }
+        String target = in.nextLine();
+        out.print("Enter amount to transfer: ");
+        if (!in.hasNextLine()) {
+            return;
+        }
+
+        long amount = Long.parseLong(in.nextLine());
+        if (amount <= 0) {
+            out.println("Invalid amount.");
+            return;
+        }
+        try {
+            if (bankService.transfer(currentUser, target, amount)) {
+                out.println("Transfer successful.");
+            } else {
+                out.println("Insufficient funds.");
+            }
+        } catch (IllegalArgumentException e) {
+            out.println("Transfer failed. Error: " + e.getMessage());
+        }
+    }
+
+    private void handleTransactions(String currentUser, PrintWriter out) {
+        List<Transaction> transactions = bankService.getTransactions(currentUser);
+        if (transactions.isEmpty()) {
+            out.println("No transactions yet.");
+        } else {
+            out.println("Transactions:");
+            for (Transaction t : transactions) {
+                out.println(t);
+            }
+        }
+
     }
 
 }
