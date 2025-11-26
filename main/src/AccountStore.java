@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,8 +39,7 @@ public class AccountStore implements Serializable {
     }
 
     public synchronized Collection<Account> allAccounts() {
-        
-        return accounts.values();
+        return new ArrayList<>(accounts.values());
     }
 
     public synchronized void saveTo(Path path) throws IOException {
