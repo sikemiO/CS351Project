@@ -38,7 +38,7 @@ public class AccountStore implements Serializable {
     }
 
     public synchronized Collection<Account> allAccounts() {
-        // Direct view is okay because Account itself is thread-safe
+        
         return accounts.values();
     }
 
