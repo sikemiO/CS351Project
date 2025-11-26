@@ -61,7 +61,7 @@ public class ClientHandler implements Runnable {
             out.println("=== Login Menu ===");
             out.println("1. Login");
             out.println("2. Signup");
-            out.println("9. Exit");
+            out.println("3. Exit");
             out.println("Pick an option: ");
             out.flush();
 
@@ -85,7 +85,7 @@ public class ClientHandler implements Runnable {
                 case 2:
                     handleCreateAccount(in, out);
                     break;
-                case 9:
+                case 3:
                     out.println("Goodbye.");
                     return false;
                 default:
