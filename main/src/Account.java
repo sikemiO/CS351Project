@@ -18,7 +18,6 @@ public class Account implements Serializable {
         }
     }
 
-
     public Account(String username, String password, long initialBalance) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username must not be empty");
@@ -38,9 +37,12 @@ public class Account implements Serializable {
         return username;
     }
 
-    // not sure if we need a hash here considering its just a project
+    // Synchronised read to keep it consistent with setPassword
     public boolean checkPassword(String candidate) {
-        return password.equals(candidate);
+        if (candidate == null) return false;
+        synchronized (lock) {
+            return password.equals(candidate);
+        }
     }
 
     public void setPassword(String newPassword) {
@@ -58,7 +60,6 @@ public class Account implements Serializable {
         }
     }
 
-
     // Deposit must be positive.
     public void deposit(long amount) {
         if (amount <= 0) {
@@ -69,10 +70,6 @@ public class Account implements Serializable {
         }
     }
 
-    /**
-     * Attempt to withdraw. Returns true on success, false if there were
-     * insufficient funds. Balance is never allowed to go below zero.
-     */
     public boolean withdraw(long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Withdrawal amount must be > 0");
@@ -86,9 +83,7 @@ public class Account implements Serializable {
         }
     }
 
-    //Expose the lock for higher-level operations (e.g. transfer).
-    //Only BankService should normally use this.
-
+    //expose lock for other operations
     Object getLock() {
         return lock;
     }

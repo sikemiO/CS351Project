@@ -26,10 +26,8 @@ public class AccountStore implements Serializable {
         return accounts.get(username);
     }
 
-    /**
-     * Create a new account with starting balance £1000.
-     * Returns the new account, or null if username already exists.
-     */
+     // Create a new account with starting balance
+
     public synchronized Account createAccount(String username, String password) {
         if (accounts.containsKey(username)) {
             return null;
@@ -40,6 +38,7 @@ public class AccountStore implements Serializable {
     }
 
     public synchronized Collection<Account> allAccounts() {
+        // Direct view is okay because Account itself is thread-safe
         return accounts.values();
     }
 
@@ -55,12 +54,7 @@ public class AccountStore implements Serializable {
         }
     }
 
-    private String getPasswordForSave(Account account) {
-        return account.getPasswordForPersistence();
-    }
-
-
-    //password helper
+    // Password helper
     private String getPasswordForSave(Account account) {
         return account.getPasswordForPersistence();
     }
@@ -75,14 +69,16 @@ public class AccountStore implements Serializable {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";");
                 if (parts.length != 3) continue; // skip bad lines
+
                 String username = parts[0];
                 String password = parts[1];
                 long balance;
                 try {
                     balance = Long.parseLong(parts[2]);
                 } catch (NumberFormatException e) {
-                    continue;
+                    continue; // skip bad rows
                 }
+
                 Account account = new Account(username, password, balance);
                 accounts.put(username, account);
             }

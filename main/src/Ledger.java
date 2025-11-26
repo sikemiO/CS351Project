@@ -7,11 +7,13 @@ public class Ledger implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // Single shared list of all transactions in the system
     private final List<Transaction> transactions = new ArrayList<>();
 
     public Ledger() {
     }
 
+    // new transaction to ledger
     public synchronized void append(Transaction t) {
         if (t == null) {
             throw new IllegalArgumentException("Transaction cannot be null");
@@ -19,9 +21,7 @@ public class Ledger implements Serializable {
         transactions.add(t);
     }
 
-
-     //Returns a snapshot list of all transactions involving the given user.
-
+    // user transactions
     public synchronized List<Transaction> findUser(String username) {
         List<Transaction> result = new ArrayList<>();
         for (Transaction t : transactions) {
@@ -32,9 +32,7 @@ public class Ledger implements Serializable {
         return Collections.unmodifiableList(result);
     }
 
-    ]
-     // Returns a snapshot list of all transactions.
-    ]
+    // all transactions
     public synchronized List<Transaction> all() {
         return Collections.unmodifiableList(new ArrayList<>(transactions));
     }
