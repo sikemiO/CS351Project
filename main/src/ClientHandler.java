@@ -286,7 +286,7 @@ public class ClientHandler implements Runnable {
         if (!in.hasNextLine()) return;
         String target = in.nextLine().trim();
 
-        out.print("Enter amount to transfer: ");
+        out.print("Enter amount to transfer: \n");
         out.flush();
         if (!in.hasNextLine()) return;
         String line = in.nextLine().trim();
